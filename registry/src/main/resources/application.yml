@@ -1,0 +1,10 @@
+server:
+  port: 5000
+
+eureka:
+  client:
+    #强制不注册到注册服务器
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://registry:${server.port}/eureka/

@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: api-service
+
+server:
+  port: 5002
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://registry:5000/eureka/
