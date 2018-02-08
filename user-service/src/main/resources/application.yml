@@ -1,9 +1,9 @@
 spring:
   application:
-    name: api-service
+    name: user-service
 
 server:
-  port: 5002
+  port: 5004
 
 eureka:
   instance:

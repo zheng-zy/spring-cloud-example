@@ -13,19 +13,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p></p>
- * Created by zhezhiyong@163.com on 2018/2/5.
+ * Created by zhezhiyong@163.com on 2018/2/8.
  */
 @RestController
-public class IndexController {
+public class UserController {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private AtomicInteger count = new AtomicInteger();
 
-    @RequestMapping(value="/hello")
+    @RequestMapping(value="/user")
     @ResponseBody
-    public String hello(@RequestParam("name") String name) throws InterruptedException {
+    public String hello(@RequestParam("name") String name){
         logger.info("name: {}", name);
-        Thread.sleep(0);
         int newCount = count.incrementAndGet();
         JSONObject object = new JSONObject();
         object.put("ret", 0);

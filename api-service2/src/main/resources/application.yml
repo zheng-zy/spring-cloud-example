@@ -3,7 +3,7 @@ spring:
     name: api-service
 
 server:
-  port: 5002
+  port: 5003
 
 eureka:
   instance:

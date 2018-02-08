@@ -23,9 +23,8 @@ public class IndexController {
 
     @RequestMapping(value="/hello")
     @ResponseBody
-    public String hello(@RequestParam("name") String name) throws InterruptedException {
+    public String hello(@RequestParam("name") String name){
         logger.info("name: {}", name);
-        Thread.sleep(0);
         int newCount = count.incrementAndGet();
         JSONObject object = new JSONObject();
         object.put("ret", 0);
