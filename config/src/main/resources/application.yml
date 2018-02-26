@@ -1,0 +1,29 @@
+server:
+  port: 4999
+spring:
+  application:
+    name: config
+#  profiles:
+#    active: native
+  cloud:
+    config:
+      server:
+        git:
+#          uri: https://github.com/zheng-zy/spring-cloud-example
+          uri: file:/F:/git/2.project/spring-cloud-example
+          search-paths: config-repo
+#          username: zhezhiyong@163.com
+#          password: gi666666
+#      uri:
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://registry:5000/eureka/
+
+security:
+  user:
+    name: user
+    password: 666666
