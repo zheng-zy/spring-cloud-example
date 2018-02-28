@@ -11,6 +11,17 @@
     <name>${project.artifactId}</name>
     <description>Demo project for Spring Boot</description>
 
+    <modules>
+        <module>api-service</module>
+        <module>api-service2</module>
+        <module>auth-service</module>
+        <module>config</module>
+        <module>gateway</module>
+        <module>registry</module>
+        <module>tools</module>
+        <module>user-service</module>
+    </modules>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
