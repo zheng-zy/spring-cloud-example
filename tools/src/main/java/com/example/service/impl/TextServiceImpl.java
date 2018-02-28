@@ -15,8 +15,12 @@ public class TextServiceImpl implements TextService{
     public String gbkToUtf8(String text) {
         //            return TestEncoder.getUTF8StringFromGBKString(text);
 //            String str = new String(text.getBytes("UTF-8"), "ISO-8859-1");
-        return getUTF8StringFromGBKString(text);
-//            return new String(text.getBytes("GBK"), "UTF-8");
+//        return getUTF8StringFromGBKString(text);
+        try {
+            return new String(text.getBytes("GBK"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return "gbkToUtf8 fail";
+        }
     }
 
     @Override
@@ -24,7 +28,7 @@ public class TextServiceImpl implements TextService{
         try {
             return new String(text.getBytes("UTF-8"), "GBK");
         } catch (UnsupportedEncodingException e) {
-            return "gbkToUtf8 fail";
+            return "utf8ToGbk fail";
         }
     }
 

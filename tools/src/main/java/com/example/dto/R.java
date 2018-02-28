@@ -28,11 +28,11 @@ public class R extends LinkedHashMap<String, Object> {
         return r;
     }
 
-//    public static R ok(String msg) {
-//        R r = new R();
-//        r.put("msg", msg);
-//        return r;
-//    }
+    public static R ok(String msg) {
+        R r = new R();
+        r.put("msg", msg);
+        return r;
+    }
 
     public static R ok(Object data) {
         R r = new R();

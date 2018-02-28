@@ -12,6 +12,7 @@
     <script language='javascript' th:src='@{/js/jquery.stringifyjson.min.js}'></script>
     <script language='javascript' th:src="@{/js/bootstrap.min.js}"></script>
     <script language='javascript' th:src="@{/js/json.format.js}"></script>
+    <script language='javascript' th:src="@{/util.js}"></script>
     <style>
         .red {
             color: #F00 !important;
@@ -29,20 +30,53 @@
 <body>
 <div class="container">
     <ul class="nav nav-tabs" id="myTab">
-        <li class="active"><a href="#gbk2utf8" hidefocus="true"><h4>GBK|UTF8编码转换</h4></a></li>
+        <li class="active"><a href="#jsonFormat" hidefocus="true"><h4>在线Json格式化</h4></a></li>
+        <li><a href="#gbk2utf8" hidefocus="true"><h4>GBK|UTF8编码转换</h4></a></li>
         <li><a href="#json_content_test" hidefocus="true"><h4>JSON协议调用测试</h4></a></li>
         <li><a href="#xml_content_test" hidefocus="true"><h4>XML协议调用测试</h4></a></li>
     </ul>
     <div class="tab-content">
-        <div class="tab-pane active" id="gbk2utf8">
+        <div class="tab-pane active" id="jsonFormat">
             <section>
-                <div class="page-header">
-                    <h1>在线编码转换</h1>
-                </div>
+                <!--<div class="page-header">-->
+                    <!--<h1>在线Json格式化</h1>-->
+                <!--</div>-->
                 <div class="highlight">
-                    <dt class="mt10">
-                        <label for="lb-head-func-select">GBK：</label>
-                    </dt>
+                    <dd class="mt10">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Json</div>
+                                <textarea class="form-control" id="json"
+                                          placeholder='请输入字符' style="height: 350px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </dd>
+                    <a class="btn btn-danger" id="checkFormatSubmit"><b>校验格式</b></a>
+                    <a class="btn btn-danger" id="formatSubmit"><b>格式化</b></a>
+                    <a class="btn btn-danger" id="removeSpaceSubmit"><b>删除空格</b></a>
+                    <dd class="mt10">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">错误提示</div>
+                                <textarea class="form-control" id="errorJson"
+                                          placeholder=''
+                                          style="height: 50px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </dd>
+                </div>
+                <div class="clear"></div>
+                <div style="height: 50px;"></div>
+            </section>
+        </div>
+        <div class="tab-pane" id="gbk2utf8">
+            <section>
+                <!--<div class="page-header">-->
+                    <!--<h1>在线编码转换</h1>-->
+                <!--</div>-->
+                <div class="highlight">
                     <dd class="mt10">
                         <div class="form-group">
                             <div class="input-group">
@@ -51,12 +85,10 @@
                                           placeholder='请输入字符' style="height: 150px;"></textarea>
                             </div>
                         </div>
-
                         <div class="clear"></div>
                     </dd>
-                    <dt class="mt10">
-                        <label for="lb-head-func-select">UTF8：</label>
-                    </dt>
+                    <a class="btn btn-danger" id="gbk-submit"><b>gbk转utf8</b></a>
+                    <a class="btn btn-danger" id="utf8-submit"><b>utf8转gbk</b></a>
                     <dd class="mt10">
                         <div class="form-group">
                             <div class="input-group">
@@ -66,26 +98,8 @@
                                           style="height: 150px;"></textarea>
                             </div>
                         </div>
-
                         <div class="clear"></div>
                     </dd>
-                </div>
-                <a class="btn btn-danger" id="gbk-submit"><b>gbk转utf8</b></a>
-                <a class="btn btn-danger" id="utf8-submit"><b>utf8转gbk</b></a>
-                <!--<%&#45;&#45; 结果集展示 &#45;&#45;%>-->
-                <div id="text-result-panel" style="display: none;">
-                    <h3>运行结果</h3>
-                    <div class="alert alert-warning">
-                        <b><a href="javascript:void(0);" style="margin-right: 8px;"
-                              class="copyToClipboard" data-target="#text-test-result-panel">复制内容</a></b>
-                        <b><a href="http://www.bejson.com/" target="_blank">在线格式化JSON</a></b>
-                    </div>
-                    <div class="hero-unit"
-                         style="padding: 10px; background-color: #eee; font-size: 12px;">
-                        <div id="text-test-result-panel">
-                            <!--<%&#45;&#45; 结果集面板 &#45;&#45;%>-->
-                        </div>
-                    </div>
                 </div>
                 <div class="clear"></div>
                 <div style="height: 50px;"></div>
@@ -320,10 +334,9 @@
             e.preventDefault();//阻止a链接的跳转行为
             $(this).tab('show');//显示当前选中的链接及关联的content
         });
-        var utf8_obj = $("#utf8");
-        var gbk_obj = $("#gbk");
-        $('#gbk-submit').on('click', function () {
 
+        $('#gbk-submit').on('click', function () {
+            var utf8_obj = $("#utf8");
             var gbk_value = $("#gbk").val();
             $(this).removeClass('btn-danger').html("运行中...");
             if (gbk_value.length > 0) {
@@ -359,7 +372,7 @@
             }
         });
         $('#utf8-submit').on('click', function () {
-
+            var gbk_obj = $("#gbk");
             var utf8_value = $("#utf8").val();
             $(this).removeClass('btn-danger').html("运行中...");
             if (utf8_value.length > 0) {
@@ -390,6 +403,61 @@
                 json_result_panel.empty().addClass('red')
                     .html('输入json格式内容.');
             }
+        });
+
+        $('#checkFormatSubmit').on('click', function () {
+            var errorJson = $("#errorJson");
+            var jsonObj = $("#json");
+            var jsonValue = jsonObj.val();
+            $(this).removeClass('btn-danger').html("运行中...");
+            if (jsonValue.length > 0) {
+                var rqParam = {"data": jsonValue};
+                $.ajax({
+                    type: "POST",//使用post方法访问后台
+                    url: "/api/checkFormat",
+                    contentType: "application/json", //必须这样写
+                    dataType: "json",//返回json格式的数据
+                    data: JSON.stringify(rqParam),//rqParam是你要提交是json字符串
+                    success: function (res) {
+                        //alert('返回码：' + data.code + ',返回信息：' + data.data);
+                        $('#checkFormatSubmit').attr(
+                            'class',
+                            'btn btn-danger')
+                            .html("格式校验");
+                        errorJson.val(res.msg);
+                    },
+                    error: function (res) {
+                        alert('接口调用有误：无法访问');
+                        $('#checkFormatSubmit').attr(
+                            'class',
+                            'btn btn-danger')
+                            .html("格式校验");
+                    }
+                });
+            } else {
+                errorJson.empty().addClass('red')
+                    .html('输入json格式内容.');
+                $('#checkFormatSubmit').attr(
+                    'class',
+                    'btn btn-danger')
+                    .html("格式校验");
+            }
+        });
+
+        $('#removeSpaceSubmit').on('click', function () {
+            var text_value = document.getElementById('json').value;
+            var jsonf = format(text_value, true);
+            document.getElementById('json').value = jsonf;
+        });
+
+        $('#formatSubmit').on('click', function () {
+            //引用示例部分
+            //(1)创建json格式或者从后台拿到对应的json格式
+            var originalJson = document.getElementById('json').value;
+            //(2)调用formatJson函数,将json格式进行格式化
+            var resultJson = formatJson(originalJson);
+            //(3)将格式化好后的json写入页面中
+            document.getElementById("json").value = resultJson;
         });
 
         $('#json-submit')
