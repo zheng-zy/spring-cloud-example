@@ -11,3 +11,5 @@ eureka:
   client:
     service-url:
       defaultZone: http://registry:5000/eureka/
+
+data: ${CONFIG_SERVER_PASSWORD:666666}

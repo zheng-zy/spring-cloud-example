@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>接口测试-K米网</title>
+    <!-- Bootstrap -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+    <script language='javascript' th:src='@{/js/jquery-1.9.0.min.js}'></script>
+    <script language='javascript' th:src='@{/js/jquery.stringifyjson.min.js}'></script>
+    <script language='javascript' th:src="@{/js/bootstrap.min.js}"></script>
+    <script language='javascript' th:src="@{/js/json.format.js}"></script>
+    <style>
+        .red {
+            color: #F00 !important;
+        }
+
+        .mt10 {
+            margin-top: 10px;
+        }
+
+        a:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <ul class="nav nav-tabs" id="myTab">
+        <li class="active"><a href="#gbk2utf8" hidefocus="true"><h4>GBK|UTF8编码转换</h4></a></li>
+        <li><a href="#json_content_test" hidefocus="true"><h4>JSON协议调用测试</h4></a></li>
+        <li><a href="#xml_content_test" hidefocus="true"><h4>XML协议调用测试</h4></a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="gbk2utf8">
+            <section>
+                <div class="page-header">
+                    <h1>在线编码转换</h1>
+                </div>
+                <div class="highlight">
+                    <dt class="mt10">
+                        <label for="lb-head-func-select">GBK：</label>
+                    </dt>
+                    <dd class="mt10">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">GBK</div>
+                                <textarea class="form-control" id="gbk"
+                                          placeholder='请输入字符' style="height: 150px;"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="clear"></div>
+                    </dd>
+                    <dt class="mt10">
+                        <label for="lb-head-func-select">UTF8：</label>
+                    </dt>
+                    <dd class="mt10">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">UTF8</div>
+                                <textarea class="form-control" id="utf8"
+                                          placeholder='请输入字符'
+                                          style="height: 150px;"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="clear"></div>
+                    </dd>
+                </div>
+                <a class="btn btn-danger" id="gbk-submit"><b>gbk转utf8</b></a>
+                <a class="btn btn-danger" id="utf8-submit"><b>utf8转gbk</b></a>
+                <!--<%&#45;&#45; 结果集展示 &#45;&#45;%>-->
+                <div id="text-result-panel" style="display: none;">
+                    <h3>运行结果</h3>
+                    <div class="alert alert-warning">
+                        <b><a href="javascript:void(0);" style="margin-right: 8px;"
+                              class="copyToClipboard" data-target="#text-test-result-panel">复制内容</a></b>
+                        <b><a href="http://www.bejson.com/" target="_blank">在线格式化JSON</a></b>
+                    </div>
+                    <div class="hero-unit"
+                         style="padding: 10px; background-color: #eee; font-size: 12px;">
+                        <div id="text-test-result-panel">
+                            <!--<%&#45;&#45; 结果集面板 &#45;&#45;%>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div style="height: 50px;"></div>
+            </section>
+        </div>
+        <div class="tab-pane" id="json_content_test">
+            <section>
+                <div class="page-header">
+                    <h1>JSON协议调用测试</h1>
+                </div>
+                <div class="highlight">
+                    <!-- 	<dl>
+                <dt class="mt10">
+                    <label for="lb-head-func-select">服务器选择：</label>
+                </dt>
+                <dd class="mt10">
+                   <select id="json-head-servce-select" class="form-control">
+                                <option value="1">大数据平台-研发</option>
+                                <option value="2">大数据平台-内网</option>
+                                <option value="3">大数据平台-外网</option>
+                                <option value="0">自定义</option>
+                    </select>
+                </dd> -->
+                    <div id="self_service_input" style="display: none;">
+                        <dt class="mt10">
+                            <label>自定义访问路径：</label>
+                        </dt>
+                        <dd class="mt10">
+                            <input type="text" class="form-control" id="serviceUri"/>
+                        </dd>
+                    </div>
+
+                    <dt class="mt10">
+                        <label for="lb-head-func-select">JSON Header：</label>
+                    </dt>
+                    <dd class="mt10">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">header</div>
+                                <textarea class="form-control" id="json_header_content_id"
+                                          placeholder='格式:a=1;b=c' style="height: 150px;">devicetag=353986054719342;customerid=1;</textarea>
+                            </div>
+                        </div>
+
+                        <div class="clear"></div>
+                    </dd>
+                    <dt class="mt10">
+                        <label for="lb-head-func-select">JSON Body：</label>
+                    </dt>
+                    <dd class="mt10">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Body</div>
+                                <textarea class="form-control" id="json_body_content_id"
+                                          placeholder='格式:{"cmdid":"D000","appid":"数据中心登记的appid","appkey":"数据中心授权给app开发商的key","companycode":"商家编码，可选。包厢绑定时才有改字段。"}'
+                                          style="height: 150px;">{"cmdid":"D000","appid":"1","appkey":"abcdefg","companycode":"00020"}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="clear"></div>
+                    </dd>
+                    <!-- <dt class="mt10">
+                        <label for="lb-head-func-select">数据类型：</label><select
+                            id="dataType" class="selectpicker">
+                            <option value="json">JSON</option>
+                            <option value="xml">XML</option>
+                        </select>
+                    </dt> -->
+                    <!--</dl>-->
+                </div>
+                <a class="btn btn-danger" id="json-submit"><b>运行测试</b></a>
+                <!--<%&#45;&#45; 结果集展示 &#45;&#45;%>-->
+                <div id="json-result-panel" style="display: none;">
+                    <h3>运行结果</h3>
+                    <div class="alert alert-warning">
+                        <b><a href="javascript:void(0);" style="margin-right: 8px;"
+                              class="copyToClipboard" data-target="#json-test-result-panel">复制JSON内容</a></b>
+                        <b><a href="http://www.bejson.com/" target="_blank">在线格式化JSON</a></b>
+                    </div>
+                    <div class="hero-unit"
+                         style="padding: 10px; background-color: #eee; font-size: 12px;">
+                        <div id="json-test-result-panel">
+                            <!--<%&#45;&#45; 结果集面板 &#45;&#45;%>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div style="height: 50px;"></div>
+            </section>
+        </div>
+        <div class="tab-pane" id="xml_content_test">
+            <div class="tab-pane active" id="json_content_test">
+                <section>
+                    <div class="page-header">
+                        <h1>XML协议调用测试</h1>
+                    </div>
+                    <div class="highlight">
+                        <div id="self_service_input" style="display: none;">
+                            <dt class="mt10">
+                                <label>自定义访问路径：</label>
+                            </dt>
+                            <dd class="mt10">
+                                <input type="text" class="form-control" id="serviceUri"/>
+                            </dd>
+                        </div>
+
+                        <dt class="mt10">
+                            <label for="lb-head-func-select">XML Header：</label>
+                        </dt>
+                        <dd class="mt10">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon">header</div>
+                                    <textarea class="form-control" id="xml_header_content_id"
+                                              placeholder='格式:a=1;b=c' style="height: 150px;">devicetag=353986054719342;customerid=1;</textarea>
+                                </div>
+                            </div>
+
+                            <div class="clear"></div>
+                        </dd>
+                        <dt class="mt10">
+                            <label for="lb-head-func-select">XML Body：</label>
+                        </dt>
+                        <dd class="mt10">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon">Body</div>
+                                    <textarea class="form-control" id="xml_body_content_id"
+                                              placeholder='格式:&lt;body cmdid="R002" phoneno="电话号码" sendcontent="短信内容" agentcode="代理商编码" /&gt;'
+                                              style="height: 150px;"><body cmdid="R002"
+                                                                           phoneno="电话号码" sendcontent="短信内容"
+                                                                           agentcode="代理商编码"/></textarea>
+                                </div>
+                            </div>
+
+                            <div class="clear"></div>
+                        </dd>
+                        <!--</dl>-->
+                    </div>
+                    <a class="btn btn-danger" id="xml-submit"><b>运行测试</b></a>
+
+                    <div id="xml-result-panel">
+                        <dd class="mt10"></dd>
+                        <dt class="mt10">
+                            <label for="lb-head-func-select">结果面板</label>
+                        </dt>
+                        <dd class="mt10">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon">response</div>
+                                    <textarea class="form-control" id="xml-test-result-panel"
+                                              style="height: 150px; color: red; background-color: rgb(240, 243, 246);"></textarea>
+                                    <!-- 	<xmp class="form-control" id="xml-test-result-panel"
+                                        style="height: 150px;"></xmp> -->
+                                </div>
+                            </div>
+
+                            <div class="clear"></div>
+                        </dd>
+                    </div>
+                    <div class="clear"></div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+    // 复制到剪切板
+    var copyToClipboard = function (txt) {
+        if (window.clipboardData) {
+            window.clipboardData.clearData();
+            window.clipboardData.setData("Text", txt);
+            alert('复制内容成功！');
+        } else if (navigator.userAgent.indexOf("Opera") != -1) {
+            window.location = txt;
+            alert('复制内容成功！');
+        } else if (window.netscape) {
+            try {
+                netscape.security.PrivilegeManager
+                    .enablePrivilege("UniversalXPConnect");
+            } catch (e) {
+                alert("被浏览器拒绝！\n请在浏览器地址栏输入'about:config'并回车\n然后将'signed.applets.codebase_principal_support'设置为'true'");
+            }
+            var clip = Components.classes['@mozilla.org/widget/clipboard;1']
+                .createInstance(Components.interfaces.nsIClipboard);
+            if (!clip)
+                return;
+            var trans = Components.classes['@mozilla.org/widget/transferable;1']
+                .createInstance(Components.interfaces.nsITransferable);
+            if (!trans)
+                return;
+            trans.addDataFlavor('text/unicode');
+            var str = new Object();
+            var len = new Object();
+            var str = Components.classes["@mozilla.org/supports-string;1"]
+                .createInstance(Components.interfaces.nsISupportsString);
+            var copytext = txt;
+            str.data = copytext;
+            trans.setTransferData("text/unicode", str, copytext.length * 2);
+            var clipid = Components.interfaces.nsIClipboard;
+            if (!clip)
+                return false;
+            clip.setData(trans, null, clipid.kGlobalClipboard);
+            alert("复制成功！");
+        }
+    };
+
+    // 绑定copy方法
+    $('.copyToClipboard').on('click', function () {
+        var jqObj = $($(this).attr('data-target'));
+        var text = jqObj.text();
+        return copyToClipboard(text);
+    });
+
+    // 下拉select对象
+    //var $select = $('#json-head-servce-select');
+
+    var json_result_panel = $("#json-test-result-panel");
+    var xml_result_panel = $("#xml-test-result-panel");
+
+    var self_service_input_content = $("#self_service_input");
+    var self_uri = $("#serviceUri");
+
+    $(function () {
+        curentTab = $('#myTab a:first');
+        $('#myTab a:first').tab('show');//初始化显示哪个tab
+        $('#myTab a').click(function (e) {
+            curentTab = $(this);
+            e.preventDefault();//阻止a链接的跳转行为
+            $(this).tab('show');//显示当前选中的链接及关联的content
+        });
+        var utf8_obj = $("#utf8");
+        var gbk_obj = $("#gbk");
+        $('#gbk-submit').on('click', function () {
+
+            var gbk_value = $("#gbk").val();
+            $(this).removeClass('btn-danger').html("运行中...");
+            if (gbk_value.length > 0) {
+                var rqParam = {"data": gbk_value};
+                $.ajax({
+                    type: "POST",//使用post方法访问后台
+                    url: "/api/gbk2utf8",
+                    contentType: "application/json", //必须这样写
+                    dataType: "json",//返回json格式的数据
+                    data: JSON.stringify(rqParam),//rqParam是你要提交是json字符串
+                    success: function (data) {
+                        console.info(data);
+                        //alert('返回码：' + data.code + ',返回信息：' + data.data);
+                        $('#gbk-submit').attr(
+                            'class',
+                            'btn btn-danger')
+                            .html("gbk转utf8");
+//                        utf8_obj.empty().html(data.data);
+//                        console.info(data.data);
+                        utf8_obj.val(data.data);
+                    },
+                    error: function (data) {
+                        alert('接口调用有误：无法访问');
+                        $('#gbk-submit').attr(
+                            'class',
+                            'btn btn-danger')
+                            .html("gbk转utf8");
+                    }
+                });
+            } else {
+                json_result_panel.empty().addClass('red')
+                    .html('输入json格式内容.');
+            }
+        });
+        $('#utf8-submit').on('click', function () {
+
+            var utf8_value = $("#utf8").val();
+            $(this).removeClass('btn-danger').html("运行中...");
+            if (utf8_value.length > 0) {
+                var rqParam = {"data": utf8_value};
+                $.ajax({
+                    type: "POST",//使用post方法访问后台
+                    url: "/api/utf82gbk",
+                    contentType: "application/json", //必须这样写
+                    dataType: "json",//返回json格式的数据
+                    data: JSON.stringify(rqParam),//rqParam是你要提交是json字符串
+                    success: function (data) {
+                        //alert('返回码：' + data.code + ',返回信息：' + data.data);
+                        $('#utf8-submit').attr(
+                            'class',
+                            'btn btn-danger')
+                            .html("utf8转gbk");
+                        gbk_obj.val(data.data);
+                    },
+                    error: function (data) {
+                        alert('接口调用有误：无法访问');
+                        $('#utf8-submit').attr(
+                            'class',
+                            'btn btn-danger')
+                            .html("utf8转gbk");
+                    }
+                });
+            } else {
+                json_result_panel.empty().addClass('red')
+                    .html('输入json格式内容.');
+            }
+        });
+
+        $('#json-submit')
+            .on(
+                'click',
+                function () {
+                    var _header_content = $("#json_header_content_id");
+                    var headerVal = _header_content.val();
+                    /* var _selVal = $select.val(); */
+                    //var _http = "";
+                    /* if (_selVal != 0) {
+                        _http = _arrayHttp[_selVal];
+                    } else {
+                        if (self_uri.val().length > 0) {
+                            _http = self_uri.val();
+                        }
+                    } */
+                    //if (_http.length > 0) {
+                    $('#json-result-panel').show();
+                    $(this).removeClass('btn-danger')
+                        .html("运行中...");
+                    var _body = $("#json_body_content_id");
+                    if (_body.val().length > 0) {
+
+                    } else {
+                        json_result_panel.empty().addClass('red')
+                            .html('输入json格式内容.');
+                    }
+                    //}
+                });
+
+        $('#xml-submit')
+            .on(
+                'click',
+                function () {
+                    var _header_content = $("#xml_header_content_id");
+                    var headerVal = _header_content.val();
+                    $(this).removeClass('btn-danger')
+                        .html("运行中...");
+                    var _body = $("#xml_body_content_id");
+                    if (_body.val().length > 0) {
+                        $
+                            .ajax({
+                                type: "POST",//使用post方法访问后台
+                                url: "../app/json.do",
+                                dataType: "xml",//返回json格式的数据
+                                beforeSend: function (request) {
+                                    request.setRequestHeader(
+                                        "htest", "4434");
+                                    if (headerVal.length > 0) {
+
+                                        var headParams = headerVal
+                                            .split(";");
+
+
+                                    }
+                                    request.setRequestHeader(
+                                        "Test",
+                                        "Chenxizhang");
+                                },
+                                data: {
+                                    body: _body.val() + ""
+                                },
+                                success: function (data) {
+                                    //alert('返回码：' + data.code + ',返回信息：' + data.msg);
+                                    $('#xml-submit').attr(
+                                        'class',
+                                        'btn btn-danger')
+                                        .html("运行测试");
+                                    xml_result_panel.empty();
+                                    xml_result_panel
+                                        .text(xmlToString(data));
+
+                                },
+                                error: function (data) {
+                                    xml_result_panel
+                                        .empty()
+                                        .addClass('red')
+                                        .html(
+                                            'XML接口调用有误：无法访问.'
+                                            + data.status);
+                                    $('#xml-submit').attr(
+                                        'class',
+                                        'btn btn-danger')
+                                        .html("运行测试");
+                                }
+                            });
+                    } else {
+                        xml_result_panel.empty().addClass('red')
+                            .html('输入xml格式内容.');
+                    }
+                    //}
+                });
+    });
+
+    //xml转换为string
+    function xmlToString(xmlDoc) {
+
+        if (window.ActiveXObject) {
+            return xmlDoc.xml; //IE
+        } else {
+            return (new XMLSerializer()).serializeToString(xmlDoc); //FF
+        }
+    }
+</script>
+</body>
+</html>

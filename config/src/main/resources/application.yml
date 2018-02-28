@@ -26,4 +26,4 @@ eureka:
 security:
   user:
     name: user
-    password: 666666
+    password: ${CONFIG_SERVER_PASSWORD:666666}

@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: auth-service
+  cloud:
+    config:
+      uri: http://config:4999
+      fail-fast: true
+      username: user
+      password: ${CONFIG_SERVER_PASSWORD:666666}
+      retry:
+        initial-interval: 2000
+        max-interval: 10000
+        multiplier: 2
+        max-attempts: 10
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/auth?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false
+    username: root
+    password: 666666
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    show-sql: true
+
