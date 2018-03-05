@@ -13,6 +13,7 @@
     <script language='javascript' th:src="@{/js/bootstrap.min.js}"></script>
     <script language='javascript' th:src="@{/js/json.format.js}"></script>
     <script language='javascript' th:src="@{/util.js}"></script>
+    <script language='javascript' th:src="@{/jq-tools.js}"></script>
     <style>
         .red {
             color: #F00 !important;
@@ -30,13 +31,13 @@
 <body>
 <div class="container">
     <ul class="nav nav-tabs" id="myTab">
-        <li class="active"><a href="#jsonFormat" hidefocus="true"><h4>在线Json格式化</h4></a></li>
+        <li class="active"><a href="#jsonFormatDiv" hidefocus="true"><h4>在线Json格式化</h4></a></li>
         <li><a href="#gbk2utf8" hidefocus="true"><h4>GBK|UTF8编码转换</h4></a></li>
         <li><a href="#json_content_test" hidefocus="true"><h4>JSON协议调用测试</h4></a></li>
         <li><a href="#xml_content_test" hidefocus="true"><h4>XML协议调用测试</h4></a></li>
     </ul>
     <div class="tab-content">
-        <div class="tab-pane active" id="jsonFormat">
+        <div class="tab-pane active" id="jsonFormatDiv">
             <section>
                 <!--<div class="page-header">-->
                     <!--<h1>在线Json格式化</h1>-->
@@ -53,8 +54,12 @@
                         <div class="clear"></div>
                     </dd>
                     <a class="btn btn-danger" id="checkFormatSubmit"><b>校验格式</b></a>
-                    <a class="btn btn-danger" id="formatSubmit"><b>格式化</b></a>
-                    <a class="btn btn-danger" id="removeSpaceSubmit"><b>删除空格</b></a>
+                    <a class="btn btn-danger" id="jsonCheck"><b>校验格式</b></a>
+                    <a class="btn btn-danger" id="jsonFormat"><b>格式化</b></a>
+                    <a class="btn btn-danger" id="jsonZip"><b>压缩</b></a>
+                    <a class="btn btn-danger" id="jsonEscape"><b>转义</b></a>
+                    <a class="btn btn-danger" id="jsonZipEscape"><b>压缩并转义</b></a>
+                    <a class="btn btn-danger" id="jsonDelEscape"><b>去除转义</b></a>
                     <dd class="mt10">
                         <div class="form-group">
                             <div class="input-group">
@@ -444,20 +449,23 @@
             }
         });
 
-        $('#removeSpaceSubmit').on('click', function () {
-            var text_value = document.getElementById('json').value;
-            var jsonf = format(text_value, true);
-            document.getElementById('json').value = jsonf;
+        $('#jsonCheck').on('click', function () {
+            jsontool.jsonformat.doFormat();
         });
-
-        $('#formatSubmit').on('click', function () {
-            //引用示例部分
-            //(1)创建json格式或者从后台拿到对应的json格式
-            var originalJson = document.getElementById('json').value;
-            //(2)调用formatJson函数,将json格式进行格式化
-            var resultJson = formatJson(originalJson);
-            //(3)将格式化好后的json写入页面中
-            document.getElementById("json").value = resultJson;
+        $('#jsonFormat').on('click', function () {
+            jsontool.jsonformat.formatJson();
+        });
+        $('#jsonZip').on('click', function () {
+            jsontool.jsonescape.escapezip(1);
+        });
+        $('#jsonEscape').on('click', function () {
+            jsontool.jsonescape.escapezip(2);
+        });
+        $('#jsonZipEscape').on('click', function () {
+            jsontool.jsonescape.escapezip(3);
+        });
+        $('#jsonDelEscape').on('click', function () {
+            jsontool.jsonescape.escapezip(4);
         });
 
         $('#json-submit')

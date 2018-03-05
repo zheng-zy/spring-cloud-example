@@ -1,68 +1,78 @@
 //格式化代码函数,已经用原生方式写好了不需要改动,直接引用就好
-var formatJson = function (json, options) {
-    var reg = null,
-        formatted = '',
-        pad = 0,
-        PADDING = '    ';
-    options = options || {};
-    options.newlineAfterColonIfBeforeBraceOrBracket = (options.newlineAfterColonIfBeforeBraceOrBracket === true) ? true : false;
-    options.spaceAfterColon = (options.spaceAfterColon === false) ? false : true;
-    if (typeof json !== 'string') {
-        json = JSON.stringify(json);
-    } else {
-        json = JSON.parse(json);
-        json = JSON.stringify(json);
-    }
-    reg = /([\{\}])/g;
-    json = json.replace(reg, '\r\n$1\r\n');
-    reg = /([\[\]])/g;
-    json = json.replace(reg, '\r\n$1\r\n');
-    reg = /(\,)/g;
-    json = json.replace(reg, '$1\r\n');
-    reg = /(\r\n\r\n)/g;
-    json = json.replace(reg, '\r\n');
-    reg = /\r\n\,/g;
-    json = json.replace(reg, ',');
-    if (!options.newlineAfterColonIfBeforeBraceOrBracket) {
-        reg = /\:\r\n\{/g;
-        json = json.replace(reg, ':{');
-        reg = /\:\r\n\[/g;
-        json = json.replace(reg, ':[');
-    }
-    if (options.spaceAfterColon) {
-        reg = /\:/g;
-        json = json.replace(reg, ':');
-    }
-    (json.split('\r\n')).forEach(function (node, index) {
-            var i = 0,
-                indent = 0,
-                padding = '';
+String.prototype.removeLineEnd = function () {
+    return this.replace(/(<.+?\s+?)(?:\n\s*?(.+?=".*?"))/g, '$1 $2')
+}
+function formatXml(text) {
+    //去掉多余的空格
+    text = '\n' + text.replace(/(<\w+)(\s.*?>)/g, function ($0, name, props) {
+        return name + ' ' + props.replace(/\s+(\w+=)/g, " $1");
+    }).replace(/>\s*?</g, ">\n<");
 
-            if (node.match(/\{$/) || node.match(/\[$/)) {
-                indent = 1;
-            } else if (node.match(/\}/) || node.match(/\]/)) {
-                if (pad !== 0) {
-                    pad -= 1;
-                }
-            } else {
-                indent = 0;
-            }
+    //把注释编码
+    text = text.replace(/\n/g, '\r').replace(/<!--(.+?)-->/g, function ($0, text) {
+        var ret = '<!--' + escape(text) + '-->';
+        //alert(ret);
+        return ret;
+    }).replace(/\r/g, '\n');
 
-            for (i = 0; i < pad; i++) {
-                padding += PADDING;
-            }
-
-            formatted += padding + node + '\r\n';
-            pad += indent;
+    //调整格式
+    var rgx = /\n(<(([^\?]).+?)(?:\s|\s*?>|\s*?(\/)>)(?:.*?(?:(?:(\/)>)|(?:<(\/)\2>)))?)/mg;
+    var nodeStack = [];
+    var output = text.replace(rgx, function ($0, all, name, isBegin, isCloseFull1, isCloseFull2, isFull1, isFull2) {
+        var isClosed = (isCloseFull1 == '/') || (isCloseFull2 == '/' ) || (isFull1 == '/') || (isFull2 == '/');
+        //alert([all,isClosed].join('='));
+        var prefix = '';
+        if (isBegin == '!') {
+            prefix = getPrefix(nodeStack.length);
         }
-    );
-    // str = str.replace("\r\n","＜br＞");
-    return formatted.replace("\r\n", "");
-};
+        else {
+            if (isBegin != '/') {
+                prefix = getPrefix(nodeStack.length);
+                if (!isClosed) {
+                    nodeStack.push(name);
+                }
+            }
+            else {
+                nodeStack.pop();
+                prefix = getPrefix(nodeStack.length);
+            }
+
+        }
+        var ret = '\n' + prefix + all;
+        return ret;
+    });
+
+    var prefixSpace = -1;
+    var outputText = output.substring(1);
+    //alert(outputText);
+
+    //把注释还原并解码，调格式
+    outputText = outputText.replace(/\n/g, '\r').replace(/(\s*)<!--(.+?)-->/g, function ($0, prefix, text) {
+        //alert(['[',prefix,']=',prefix.length].join(''));
+        if (prefix.charAt(0) == '\r')
+            prefix = prefix.substring(1);
+        text = unescape(text).replace(/\r/g, '\n');
+        var ret = '\n' + prefix + '<!--' + text.replace(/^\s*/mg, prefix) + '-->';
+        //alert(ret);
+        return ret;
+    });
+
+    return outputText.replace(/\s+$/g, '').replace(/\r/g, '\r\n');
+}
+function getPrefix(prefixIndex) {
+    var span = '    ';
+    var output = [];
+    for (var i = 0; i < prefixIndex; ++i) {
+        output.push(span);
+    }
+
+    return output.join('');
+}
+
 //引用示例部分
-//(1)创建json格式或者从后台拿到对应的json格式
-var originalJson = {"name": "binginsist", "sex": "男", "age": "25"};
-//(2)调用formatJson函数,将json格式进行格式化
-var resultJson = formatJson(originalJson);
-//(3)将格式化好后的json写入页面中
-document.getElementById("writePlace").innerHTML = '<pre>' +resultJson + '<pre/>';
+//(1)创建xml格式或者从后台拿到对应的xml格式
+var originalXml = '<?xml version="1.0"?> <note> <to>Tove</to> <from>Jani</from> <heading>Reminder</heading> <body>Dont forget me this weekend!</body> </note>';
+//(2)调用formatXml函数,将xml格式进行格式化
+var resultXml = formatXml(originalXml);
+//(3)将格式化好后的formatXml写入页面中
+document.getElementById("writePlace").innerHTML = '<pre>' +resultXml + '<pre/>';
